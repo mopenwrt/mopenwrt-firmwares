@@ -194,6 +194,24 @@ jobs:
         make diffconfig
         make package/compile -j$(($(nproc)+1)) IGNORE_ERRORS=1 || make package/compile -j1 V=s IGNORE_ERRORS=1
         make package/index
+        echo "::set-output name=COMPILE_STATUS::success"
+
+    - name: SSH connection to Actions
+      uses: P3TERX/ssh2actions@v1.0.0
+      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
+
+    - name: Echo Target Packages
+      if: steps.compile.outputs.COMPILE_STATUS == 'success'
+      id: echoTarget
+      run: |
+        cd $OPENWRTROOT
+        echo -e "$(($(nproc)+1)) thread compile"
+        make tools/compile -j$(($(nproc)+1)) || make tools/compile -j1 V=s
+        make toolchain/compile -j$(($(nproc)+1)) || make toolchain/compile -j1 V=s
+        make target/compile -j$(($(nproc)+1)) || make target/compile -j1 V=s IGNORE_ERRORS=1
+        make diffconfig
+        make package/compile -j$(($(nproc)+1)) IGNORE_ERRORS=1 || make package/compile -j1 V=s IGNORE_ERRORS=1
+        make package/index
         cd $OPENWRTROOT/bin/packages/*
         PLATFORM=$(basename `pwd`)
         echo "PLATFORM=$PLATFORM" >> $GITHUB_ENV
@@ -209,10 +227,6 @@ jobs:
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "::set-output name=FIRMWARE::$(echo $PWD)"
         echo "::set-output name=COMPILE_STATUS::success"
-
-    - name: SSH connection to Actions
-      uses: P3TERX/ssh2actions@v1.0.0
-      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
 
     - name: Generate Firmware
       if: steps.compile.outputs.COMPILE_STATUS == 'success'
