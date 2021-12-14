@@ -18,8 +18,14 @@ svn co https://github.com/immortalwrt/packages/trunk/net/gowebdav packages/net/g
 # rm -rf ../package/lean/luci-app-netdata
 # svn co https://github.com/281677160/openwrt-package/trunk/feeds/luci/applications/luci-app-netdata luci/applications/luci-app-netdata
 
+# Add Easyapp
+svn co https://github.com/ntlf9t/luci-app-easymesh/trunk luci/applications/luci-app-easymesh
+
 # Add tmate
 git clone --depth=1 https://github.com/immortalwrt/openwrt-tmate
+
+# Add naiveproxy
+git clone --depth=1 https://github.com/immortalwrt-collections/openwrt-naiveproxy
 
 # Add luci-app-passwall
 # git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall luci/applications/openwrt-passwall
