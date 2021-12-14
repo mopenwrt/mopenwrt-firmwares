@@ -26,7 +26,7 @@ echo $(uci -q get uhttpd.main.index_page) | grep -q "cgi-bin/luci" ||
 
 /etc/init.d/wizard disable
 
-[ -f /usr/bin/wget ] && 	
+[ -f /usr/bin/wget ] &&
 	ln -s /usr/bin/wget /usr/bin/wget-ssl
 
 sed -i "s/git-.*-\(.*\)/git-\1/g" /usr/lib/lua/luci/version.lua
@@ -39,8 +39,8 @@ echo "$min $hour * * * sh /etc/rc.d/S99packages >/dev/null 2>&1" >> /etc/crontab
 
 [[ "$(echo "$(/sbin/cpuinfo 2>/dev/null)" | grep -i "MHz")" ]] || sed -i "s/_('CPU Info'),cpuinfo.cpufreq,//" /www/luci-static/resources/view/status/include/10_system.js
 
-grep -q op.supes.top /etc/bypass/white.list ||
-		echo "op.supes.top" >> /etc/bypass/white.list
+# grep -q op.supes.top /etc/bypass/white.list ||
+# 		echo "op.supes.top" >> /etc/bypass/white.list
 
 processor=`cat /proc/cpuinfo | grep 'processor' | wc -l`
 test -n "$processor" || processor=3
@@ -70,10 +70,10 @@ test $version -lt 1 && {
 
 	uci -q set base_config.@status[0].SSID=${SSID}
 	# uci set base_config.@status[0].SSID_PASSWD=${SSID_PASSWD}
-	
+
 	uci -q set upnpd.config.enabled='1'
 	uci commit upnpd
-	
+
 	grep -q log-facility /etc/dnsmasq.conf ||
 		echo "log-facility=/dev/null" >> /etc/dnsmasq.conf
 
@@ -85,11 +85,11 @@ test $version -lt 1 && {
 
 	uci -q set fstab.@global[0].anon_mount=1
 	uci commit fstab
- 
-	uci -q set network.lan.ipaddr="10.0.0.1"
+
+	uci -q set network.lan.ipaddr="192.168.16.1"
 	uci -q set network.@globals[0].packet_steering=1
 	uci commit network
-  
+
 	uci -q set dhcp.@dnsmasq[0].dns_redirect='1'
 	uci -q set dhcp.dnsmasq[0].allservers='1'
 	uci -q set dhcp.lan.force='1'
@@ -107,7 +107,7 @@ test $version -lt 1 && {
 	uci -q set system.@system[0].conloglevel='4'
 	uci -q set system.@system[0].cronloglevel='8'
 	uci commit system
-	
+
 	/etc/init.d/fa-fancontrol disable >/dev/null 2>&1
 }
 
