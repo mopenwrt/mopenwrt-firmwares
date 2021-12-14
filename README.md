@@ -49,6 +49,7 @@ devices
     ├── patches                     # Patches to be applied onto OpenWrt buildroot dir
     │   └── 001-somepatch.patch
     └── settings.ini
+```
 
 ## Credits
 
