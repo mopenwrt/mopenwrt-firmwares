@@ -53,7 +53,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: ["${{ github.event.client_payload.target }}"]
+        # target: ["${{ github.event.client_payload.target }}"]
+        target: ["rockchip"]
 
     steps:
     - name: Checkout
