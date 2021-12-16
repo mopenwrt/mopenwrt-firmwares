@@ -77,6 +77,7 @@ jobs:
           source "${GITHUB_WORKSPACE}/devices/${{matrix.target}}/settings.ini"
         fi
         echo "KMODS_IN_FIRMWARE=${KMODS_IN_FIRMWARE}" >> $GITHUB_ENV
+        echo "IPV6MOD_IN_FIRMWARE=${IPV6MOD_IN_FIRMWARE}" >> $GITHUB_ENV
         echo "REPO_URL=${REPO_URL}" >> $GITHUB_ENV
         echo "REPO_BRANCH=${REPO_BRANCH}" >> $GITHUB_ENV
         echo "CONFIG_FILE=${CONFIG_FILE}" >> $GITHUB_ENV
@@ -167,11 +168,12 @@ jobs:
       id: package
       run: |
         cd openwrt
+        make defconfig
         if "$KMODS_IN_FIRMWARE" = 'true'
         then
           echo "CONFIG_ALL_NONSHARED=y" >> .config
         fi
-        make defconfig
+        [[ -f "devices/${{matrix.target}}/modify_config.sh" ]] && /bin/bash "devices/${{matrix.target}}/modify_config.sh"
         make download -j$(($(nproc)+1))
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
@@ -218,36 +220,8 @@ jobs:
       if: steps.compile.outputs.COMPILE_STATUS == 'success'
       id: generate
       run: |
-        cd configs/opkg
-        sed -i "s/subtarget/$SUBTARGET/g" distfeeds*.conf
-        sed -i "s/target\//$TARGET\//g" distfeeds*.conf
-        sed -i "s/platform/$PLATFORM/g" distfeeds*.conf
         cd $OPENWRTROOT
-        mkdir -p files/etc/uci-defaults/
-        cp ../scripts/init-settings.sh files/etc/uci-defaults/99-init-settings
-        mkdir -p files/etc/opkg
-        cp ../configs/opkg/distfeeds-packages-server.conf files/etc/opkg/distfeeds.conf.server
-        mkdir -p files/etc/opkg/keys
-        cp ../configs/opkg/1035ac73cc4e59e3 files/etc/opkg/keys/1035ac73cc4e59e3
-        if "$KMODS_IN_FIRMWARE" = 'true'
-        then
-            mkdir -p files/www/snapshots
-            cp -r bin/targets files/www/snapshots
-            cp ../configs/opkg/distfeeds-18.06-local.conf files/etc/opkg/distfeeds.conf
-        else
-            cp ../configs/opkg/distfeeds-18.06-remote.conf files/etc/opkg/distfeeds.conf
-        fi
-        cp files/etc/opkg/distfeeds.conf.server files/etc/opkg/distfeeds.conf.mirror
-        sed -i "s/http:\/\/192.168.123.100:2345\/snapshots/https:\/\/openwrt.cc\/snapshots\/$(date +"%Y-%m-%d")\/lean/g" files/etc/opkg/distfeeds.conf.mirror
-        if "$IPV6MOD_IN_FIRMWARE" = 'true'
-        then
-            mkdir -p files/www/ipv6-modules
-            cp bin/packages/$PLATFORM/luci/luci-proto-ipv6* files/www/ipv6-modules
-            cp bin/packages/$PLATFORM/base/{ipv6helper*,odhcpd-ipv6only*,odhcp6c*,6in4*} "files/www/ipv6-modules"
-            cp bin/targets/$TARGET/$SUBTARGET/packages/{ip6tables*,kmod-nf-nat6*,kmod-ipt-nat6*,kmod-sit*,kmod-ip6tables-extra*} "files/www/ipv6-modules"
-            mkdir -p files/bin
-            cp ../scripts/ipv6-helper.sh files/bin/ipv6-helper
-        fi
+        /bin/bash ${GITHUB_WORKSPACE}/scripts/init-feed-settings.sh
         make package/install -j$(($(nproc)+1)) || make package/install -j1 V=s
         make target/install -j$(($(nproc)+1)) || make target/install -j1 V=s
         make checksum
