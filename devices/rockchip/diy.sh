@@ -14,4 +14,3 @@ wget -P target/linux/rockchip/armv8/base-files/usr/bin/ https://github.com/frien
 
 /bin/bash $GITHUB_WORKSPACE/scripts/preset-clash-core.sh armv8
 /bin/bash $GITHUB_WORKSPACE/scripts/preset-terminal-tools.sh
-/bin/bash $SCRIPT_DIR/modify_config.sh
