@@ -1,77 +1,34 @@
 #!/bin/bash
-
-function gitClone() {
-  local POSITIONAL=()
-  local DEPTH="--depth=1"
-  local BRANCH=""
-  while [[ $# -gt 0 ]]; do
-    key="$1"
-
-    case $key in
-      -b|--branch)
-        BRANCH="$1 $2"
-        shift # past argument
-        shift # past value
-        ;;
-      --depth=*)
-        DEPTH="$1"
-        shift # past argument=value
-        ;;
-      *)    # unknown option
-        POSITIONAL+=("$1") # save it in an array for later
-        shift # past argument
-        ;;
-    esac
-  done
-
-  set -- "${POSITIONAL[@]}" # restore positional parameters
-
-  local url=$1
-  local dir=${2:-`basename ${url}`}
-  dir=${dir%.*}
-  if [ -f "$dir/.git/config" ]; then
-    echo "git pull $url to $dir"
-    git -C "$dir" pull
-  else
-    # rm -fr $dir
-    echo "git clone $DEPTH $BRANCH $url to $dir"
-    git clone $DEPTH $BRANCH $url $dir
-  fi
-}
-
-function svnClone() {
-  local url=$1
-  local dir=${2:-`basename ${url}`}
-  dir=${dir%.*}
-  if [ -d "$dir/.svn" ]; then
-    echo "svn update $url to $dir"
-    svn up "$dir"
-  else
-    # rm -fr $dir
-    echo "svn clone $url to $dir"
-    svn co $url $dir
-  fi
-}
-
+echo "add&patch kernel packages"
+source "$GITHUB_WORKSPACE/scripts/clone-repo.sh"
 
 # Clone community packages to package/community
 mkdir package/community
 pushd package/community
+
+echo Add community packages to package/community
 
 # Add Lienol's Packages
 gitClone https://github.com/Lienol/openwrt-package
 rm -rf openwrt-package/verysync
 rm -rf openwrt-package/luci-app-verysync
 
+# Add tmate
+gitClone https://github.com/immortalwrt/openwrt-tmate
+
+# Add naiveproxy
+gitClone https://github.com/immortalwrt-collections/openwrt-naiveproxy
+
 # Add luci-app-ssr-plus
 gitClone https://github.com/fw876/helloworld.git
+
+# Add luci-app-passwall
+gitClone https://github.com/xiaorouji/openwrt-passwall
+# gitClone -b hello https://github.com/DHDAXCW/openwrt-passwall luci/applications/openwrt-passwall
 
 # Add luci-app-unblockneteasemusic
 rm -rf ../lean/luci-app-unblockmusic
 gitClone https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic.git
-
-# Add luci-app-passwall
-#gitClone https://github.com/xiaorouji/openwrt-passwall
 
 # Add luci-app-vssr <M>
 gitClone https://github.com/jerrykuku/lua-maxminddb.git
@@ -101,9 +58,6 @@ svnClone https://github.com/linkease/nas-packages-luci/trunk/luci/luci-app-ddnst
 svnClone https://github.com/linkease/nas-packages-luci/trunk/luci/luci-app-linkease
 svnClone https://github.com/linkease/nas-packages/trunk/network/services/ddnsto
 svnClone https://github.com/linkease/nas-packages/trunk/network/services/linkease
-
-# Add luci-app-oled (R2S Only)
-gitClone https://github.com/NateLol/luci-app-oled
 
 # Add luci-app-diskman
 # gitClone https://github.com/SuLingGG/luci-app-diskman
@@ -155,16 +109,23 @@ svnClone https://github.com/zcy85611/Openwrt-Package/trunk/udpspeeder-tunnel
 
 # Add OpenAppFilter
 gitClone https://github.com/destan19/OpenAppFilter
-popd
-
-# Add cpufreq
-rm -rf package/lean/luci-app-cpufreq
-svnClone https://github.com/immortalwrt/luci/trunk/applications/luci-app-cpufreq feeds/luci/applications/luci-app-cpufreq
-ln -sf ../../../feeds/luci/applications/luci-app-cpufreq ./package/feeds/luci/luci-app-cpufreq
 
 # Add luci-aliyundrive-webdav
 svnClone https://github.com/messense/aliyundrive-webdav/trunk/openwrt/aliyundrive-webdav
 svnClone https://github.com/messense/aliyundrive-webdav/trunk/openwrt/luci-app-aliyundrive-webdav
+
+popd
+
+# Add Easymesh
+rm -rf package/lean/luci-app-easymesh
+svnClone https://github.com/ntlf9t/luci-app-easymesh/trunk package/lean/luci-app-easymesh
+
+# Add cpufreq
+rm -rf package/lean/luci-app-cpufreq
+svnClone https://github.com/immortalwrt/luci/trunk/applications/luci-app-cpufreq package/lean/luci-app-cpufreq
+# svnClone https://github.com/immortalwrt/luci/trunk/applications/luci-app-cpufreq feeds/luci/applications/luci-app-cpufreq
+# ln -sf ../../../feeds/luci/applications/luci-app-cpufreq ./package/feeds/luci/luci-app-cpufreq
+
 
 # 动态DNS
 # gitClone https://github.com/small-5/ddns-scripts-dnspod package/lean/ddns-scripts_dnspod
@@ -178,67 +139,10 @@ pushd package/lean
 svnClone https://github.com/immortalwrt/packages/trunk/net/pandownload-fake-server
 popd
 
-# Mod zzz-default-settings
-pushd package/lean/default-settings/files
-sed -i '/http/d' zzz-default-settings
-sed -i '/18.06/d' zzz-default-settings
-export orig_version=$(cat "zzz-default-settings" | grep DISTRIB_REVISION= | awk -F "'" '{print $2}')
-export date_version=$(date -d "$(rdate -n -4 -p ntp.aliyun.com)" +'%Y-%m-%d')
-sed -i "s/${orig_version}/${orig_version} (${date_version})/g" zzz-default-settings
-popd
-
-# Fix libssh
-pushd feeds/packages/libs
-rm -rf libssh
-svnClone https://github.com/openwrt/packages/trunk/libs/libssh
-popd
-
-# Use Lienol's https-dns-proxy package
-pushd feeds/packages/net
-rm -rf https-dns-proxy
-svnClone https://github.com/Lienol/openwrt-packages/trunk/net/https-dns-proxy
-popd
-
-# Use snapshots syncthing package
-pushd feeds/packages/utils
-rm -rf syncthing
-svnClone https://github.com/openwrt/packages/trunk/utils/syncthing
-popd
-
-# Fix mt76 wireless driver
-pushd package/kernel/mt76
-sed -i '/mt7662u_rom_patch.bin/a\\techo mt76-usb disable_usb_sg=1 > $\(1\)\/etc\/modules.d\/mt76-usb' Makefile
-popd
-
 # Add po2lmo
 gitClone https://github.com/openwrt-dev/po2lmo.git
 pushd po2lmo
 # make && sudo make install
 popd
 
-rm -rf ./package/kernel/linux/modules/video.mk
-wget -P package/kernel/linux/modules/ https://github.com/immortalwrt/immortalwrt/raw/master/package/kernel/linux/modules/video.mk
-
-# Change default shell to zsh
-sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd
-
-# Modify default IP
-sed -i 's/192.168.1.1/192.168.16.1/g' package/base-files/files/bin/config_generate
-sed -i '/uci commit system/i\uci set system.@system[0].hostname='FusionWrt'' package/lean/default-settings/files/zzz-default-settings
-sed -i "s/OpenWrt /DHDAXCW @ FusionWrt $(TZ=UTC-8 date "+%Y%m%d") /g" package/lean/default-settings/files/zzz-default-settings
-# find package/*/ feeds/*/ -maxdepth 6 -path "*luci-app-smartdns/luasrc/controller/smartdns.lua" | xargs -i sed -i 's/\"SmartDNS\")\, 4/\"SmartDNS\")\, 3/g' {}
-# Test kernel 5.10
-# sed -i 's/5.4/5.10/g' target/linux/rockchip/Makefile
-
-# Custom configs
-# git am $GITHUB_WORKSPACE/patches/lean/*.patch
-# git am $GITHUB_WORKSPACE/patches/*.patch
-echo -e " DHDAXCW's FusionWrt built on "$(date +%Y.%m.%d)"\n -----------------------------------------------------" >> package/base-files/files/etc/banner
-echo 'net.bridge.bridge-nf-call-iptables=0' >> package/base-files/files/etc/sysctl.conf
-echo 'net.bridge.bridge-nf-call-ip6tables=0' >> package/base-files/files/etc/sysctl.conf
-echo 'net.bridge.bridge-nf-call-arptables=0' >> package/base-files/files/etc/sysctl.conf
-echo 'net.bridge.bridge-nf-filter-vlan-tagged=0' >> package/base-files/files/etc/sysctl.conf
-# Add CUPInfo
-# pushd package/lean/autocore/files/arm/sbin
-# cp -f $GITHUB_WORKSPACE/scripts/cpuinfo cpuinfo
-# popd
+echo "add&patch packages done."

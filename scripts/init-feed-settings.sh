@@ -5,7 +5,7 @@ copyFeeds() {
   sed -i "s/subtarget/$SUBTARGET/g;s/target\//$TARGET\//g;s/platform/$PLATFORM/g" $2
 }
 
-pushd $OPENWRTROOT
+cd $OPENWRTROOT
 mkdir -p files/etc/opkg
 copyFeeds $GITHUB_WORKSPACE/configs/opkg/distfeeds-packages-server.conf files/etc/opkg/distfeeds.conf.server
 mkdir -p files/etc/opkg/keys
@@ -22,13 +22,12 @@ fi
 cp files/etc/opkg/distfeeds.conf.server files/etc/opkg/distfeeds.conf.mirror
 sed -i "s/http:\/\/192.168.123.100:2345\/snapshots/https:\/\/openwrt.cc\/snapshots/g" files/etc/opkg/distfeeds.conf.mirror
 echo "IPV6MOD_IN_FIRMWARE=$IPV6MOD_IN_FIRMWARE"
-if [ "$IPV6MOD_IN_FIRMWARE" == "true" ]; then
+if [[ "$IPV6MOD_IN_FIRMWARE" == "true" ]]; then
   echo "install IPV6MOD IN FIRMWARE"
   mkdir -p files/www/ipv6-modules
   cp bin/packages/$PLATFORM/luci/luci-proto-ipv6* files/www/ipv6-modules
   cp bin/packages/$PLATFORM/base/{ipv6helper*,odhcpd-ipv6only*,odhcp6c*,6in4*} "files/www/ipv6-modules"
   cp bin/targets/$TARGET/$SUBTARGET/packages/{ip6tables*,kmod-nf-nat6*,kmod-ipt-nat6*,kmod-sit*,kmod-ip6tables-extra*} "files/www/ipv6-modules"
   mkdir -p files/bin
-  cp diy/ipv6-helper.sh files/bin/ipv6-helper
+  cp ipv6-helper.sh files/bin/ipv6-helper
 fi
-popd

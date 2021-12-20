@@ -1,17 +1,19 @@
 #!/bin/bash
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "$GITHUB_WORKSPACE/scripts/clone-repo.sh"
+
+SCRIPT_DIR="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
 mkdir -p files/root
 pushd files/root
 
 ## Install oh-my-zsh
 # Clone oh-my-zsh repository
-git clone https://github.com/robbyrussell/oh-my-zsh ./.oh-my-zsh
+gitClone https://github.com/robbyrussell/oh-my-zsh ./.oh-my-zsh
 
 # Install extra plugins
-git clone https://github.com/zsh-users/zsh-autosuggestions ./.oh-my-zsh/custom/plugins/zsh-autosuggestions
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ./.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-git clone https://github.com/zsh-users/zsh-completions ./.oh-my-zsh/custom/plugins/zsh-completions
+gitClone https://github.com/zsh-users/zsh-autosuggestions ./.oh-my-zsh/custom/plugins/zsh-autosuggestions
+gitClone https://github.com/zsh-users/zsh-syntax-highlighting.git ./.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+gitClone https://github.com/zsh-users/zsh-completions ./.oh-my-zsh/custom/plugins/zsh-completions
 
 # Get .zshrc dotfile
 cp $SCRIPT_DIR/.zshrc .

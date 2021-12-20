@@ -1,7 +1,10 @@
 #!/bin/bash
 
-#MYTARGET=${{matrix.target}}
-MYTARGET=rockchip
+shopt -s globstar
+
+NUMCORES=$(nproc)
+(($NUMCORES <= 0)) && NUMCORES=1
+
 
 source "${GITHUB_WORKSPACE}/devices/common/settings.ini"
 if [ -f "${GITHUB_WORKSPACE}devices/$MYTARGET/settings.ini" ]; then
@@ -12,7 +15,7 @@ echo "IPV6MOD_IN_FIRMWARE=${IPV6MOD_IN_FIRMWARE}" >> $GITHUB_ENV
 echo "REPO_URL=${REPO_URL}" >> $GITHUB_ENV
 echo "REPO_BRANCH=${REPO_BRANCH}" >> $GITHUB_ENV
 echo "CONFIG_FILE=${CONFIG_FILE}" >> $GITHUB_ENV
-echo "DIY_SH=${DIY_SH}" >> $GITHUB_ENV
+# echo "DIY_SH=${DIY_SH}" >> $GITHUB_ENV
 echo "FREE_UP_DISK=${FREE_UP_DISK}" >> $GITHUB_ENV
 echo "UPLOAD_BIN_DIR_FOR_ARTIFACT=${UPLOAD_BIN_DIR_FOR_ARTIFACT}" >> $GITHUB_ENV
 echo "UPLOAD_FIRMWARE_FOR_ARTIFACT=${UPLOAD_FIRMWARE_FOR_ARTIFACT}" >> $GITHUB_ENV
@@ -20,4 +23,13 @@ echo "UPLOAD_FIRMWARE_FOR_RELEASE=${UPLOAD_FIRMWARE_FOR_RELEASE}" >> $GITHUB_ENV
 echo "UPLOAD_FIRMWARE_TO_COWTRANSFER=${UPLOAD_FIRMWARE_TO_COWTRANSFER}" >> $GITHUB_ENV
 echo "UPLOAD_FIRMWARE_TO_WETRANSFER=${UPLOAD_FIRMWARE_TO_WETRANSFER}" >> $GITHUB_ENV
 echo "OPENWRTROOT=${GITHUB_WORKSPACE}/openwrt" >> $GITHUB_ENV
-chmod +x ${GITHUB_WORKSPACE}/scripts/*.sh
+echo "MYTARGET=${MYTARGET}" >> $GITHUB_ENV
+echo "NUMCORES=${NUMCORES}" >> $GITHUB_ENV
+chmod +x ${GITHUB_WORKSPACE}/scripts/**/*.sh
+
+# cp -rf devices/common/. openwrt/
+# cp -rf devices/${MYTARGET}/. openwrt/
+cp -rf $GITHUB_WORKSPACE/devices $OPENWRTROOT/
+
+chmod +x $OPENWRTROOT/devices/${MYTARGET}/*.sh
+chmod +x $OPENWRTROOT/devices/common/*.sh
