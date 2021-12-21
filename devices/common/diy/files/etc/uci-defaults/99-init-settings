@@ -10,10 +10,51 @@ cd /etc/rc.d
 rm -f S98udptools || true
 rm -f S99nft-qos || true
 
+# uci set firewall.@zone[1].output='ACCEPT'
+# uci set firewall.@zone[1].input='ACCEPT'
+# the zone[1] means WAN zone.
+/usr/bin/lua - <<EOF
+require("uci")
+local cursor = uci.cursor()
+function findId(config, section, name)
+  local result
+  cursor:foreach(config, section, function(zone)
+    if zone["name"] == name then
+      result = zone[".name"]
+      return false
+    end
+  end)
+  return result
+end
+local wanZoneId = findId("firewall", "zone", "wan")
+if wanZoneId then
+  cursor:set("firewall", wanZoneId, "output", "ACCEPT")
+  cursor:set("firewall", wanZoneId, "input", "ACCEPT")
+  cursor:commit("firewall")
+end
+EOF
+
+# sshd listen on all interfaces
+uci delete dropbear.@dropbear[0].Interface
+
+# sshd disable password auth.
+if [ -s "/etc/dropbear/authorized_keys" ]; then
+  uci set dropbear.@dropbear[0].PasswordAuth='off'
+  uci set dropbear.@dropbear[0].RootPasswordAuth='off'
+fi
+uci commit dropbear
+
+# change the theme-argon use dark mode
+uci set argon-config.@global[0].mode='dark'
+uci set argon-config.@global[0].bing_background='1'
+uci commit argon-config
+
 # Try to execute init.sh (if exists)
 
-if [ ! -f "/boot/init.sh" ]; then
-bash /boot/init.sh
+BOOT_DIR="/boot"
+
+if [ ! -f "$BOOT_DIR/init.sh" ]; then
+bash "$BOOT_DIR/init.sh"
 fi
 
 exit 0

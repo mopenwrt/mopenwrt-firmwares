@@ -38,7 +38,7 @@ function gitClone() {
 
   local url=$1
   local dir=${2:-`basename ${url}`}
-  echo gitclone $url $dir
+  # echo gitclone $url $dir
   # local mdir=`dirname $dir`
   dir=$(getFileNameNoExt $dir .git)
   if [ -f "$dir/.git/config" ]; then

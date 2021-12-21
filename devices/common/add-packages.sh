@@ -73,10 +73,12 @@ rm -rf ../lean/luci-app-dockerman
 gitClone https://github.com/lisaac/luci-app-dockerman
 gitClone https://github.com/lisaac/luci-lib-docker
 
-# Add luci-theme-argon
-gitClone -b 18.06 https://github.com/jerrykuku/luci-theme-argon
+# Add luci-theme-argon config
 gitClone https://github.com/jerrykuku/luci-app-argon-config
-rm -rf ../lean/luci-theme-argon
+# update the luci-theme-argon
+# rm -rf package/lean/luci-theme-argon
+gitClone -b 18.06 https://github.com/jerrykuku/luci-theme-argon
+# svnClone https://github.com/jerrykuku/luci-theme-argon/branches/18.06 package/lean/luci-theme-argon-18.06
 
 # Add subconverter
 # https://github.com/tindy2013/subconverter

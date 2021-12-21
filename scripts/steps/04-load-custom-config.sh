@@ -3,6 +3,8 @@
 shopt -s globstar
 source "$GITHUB_WORKSPACE/scripts/clone-repo.sh"
 
+cd $OPENWRTROOT
+
 [ -f "devices/common/before_defconf.sh" ] && /bin/bash devices/common/before_defconf.sh
 [ -f "devices/${MYTARGET}/before_defconf.sh" ] && /bin/bash devices/${MYTARGET}/before_defconf.sh
 

@@ -13,8 +13,8 @@ cp $GITHUB_WORKSPACE/configs/opkg/1035ac73cc4e59e3 files/etc/opkg/keys/1035ac73c
 echo "KMODS_IN_FIRMWARE=$KMODS_IN_FIRMWARE"
 if [[ "$KMODS_IN_FIRMWARE" == "true" ]]; then
   echo "install packages in local"
-  mkdir -p files/www/snapshots
-  cp -r bin/targets files/www/snapshots
+  mkdir -p files/www/snapshots/targets/$TARGET/$SUBTARGET
+  cp -r bin/targets/$TARGET/$SUBTARGET/{packages,config.buildinfo,public.key} files/www/snapshots/targets/$TARGET/$SUBTARGET/
   copyFeeds $GITHUB_WORKSPACE/configs/opkg/distfeeds-18.06-local.conf files/etc/opkg/distfeeds.conf
 else
   copyFeeds $GITHUB_WORKSPACE/configs/opkg/distfeeds-18.06-remote.conf files/etc/opkg/distfeeds.conf
