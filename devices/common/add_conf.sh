@@ -80,3 +80,31 @@ CONFIG_SAMBA4_SERVER_WSDD2=y
 # CONFIG_PACKAGE_samba36-server is not set
 " >> .config
 fi
+
+if [[ "$DISABLE_KMS_SERVER" == "true" ]]; then
+  echo "
+# CONFIG_PACKAGE_vlmcsd is not set
+# CONFIG_PACKAGE_luci-app-vlmcsd is not set
+" >> .config
+fi
+
+
+if [[ "$DISABLE_SSR_PLUS" == "true" ]]; then
+  echo "
+# CONFIG_PACKAGE_luci-app-ssr-plus is not set
+# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Libev_Client is not set
+" >> .config
+fi
+
+if [[ "$DISABLE_FTP_SERVER" == "true" ]]; then
+  echo "# CONFIG_PACKAGE_luci-app-vsftpd is not set" >> .config
+fi
+
+if [[ "$DISABLE_DDNS" == "true" ]]; then
+  echo "
+# CONFIG_DEFAULT_luci-app-ddns is not set
+# CONFIG_PACKAGE_ddns-scripts is not set
+# CONFIG_PACKAGE_ddns-scripts_aliyun is not set
+# CONFIG_PACKAGE_ddns-scripts_dnspod is not set
+" >> .config
+fi

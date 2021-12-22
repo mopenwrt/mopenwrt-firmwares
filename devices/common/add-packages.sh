@@ -117,18 +117,21 @@ gitClone https://github.com/destan19/OpenAppFilter
 svnClone https://github.com/messense/aliyundrive-webdav/trunk/openwrt/aliyundrive-webdav
 svnClone https://github.com/messense/aliyundrive-webdav/trunk/openwrt/luci-app-aliyundrive-webdav
 
-popd
-
 # Add Easymesh
-rm -rf package/lean/luci-app-easymesh
-svnClone https://github.com/ntlf9t/luci-app-easymesh/trunk package/lean/luci-app-easymesh
+rm -rf ../lean/luci-app-easymesh
+svnClone https://github.com/ntlf9t/luci-app-easymesh/trunk luci-app-easymesh
 
 # Add cpufreq
-rm -rf package/lean/luci-app-cpufreq
-svnClone https://github.com/immortalwrt/luci/trunk/applications/luci-app-cpufreq package/lean/luci-app-cpufreq
+rm -rf ../lean/luci-app-cpufreq
+svnClone https://github.com/immortalwrt/luci/trunk/applications/luci-app-cpufreq luci-app-cpufreq
 # svnClone https://github.com/immortalwrt/luci/trunk/applications/luci-app-cpufreq feeds/luci/applications/luci-app-cpufreq
 # ln -sf ../../../feeds/luci/applications/luci-app-cpufreq ./package/feeds/luci/luci-app-cpufreq
 
+popd
+
+# # Add Easymesh
+# [ $UPDATE_REPO == "true" ] && rm -rf package/lean/luci-app-easymesh
+# svnClone https://github.com/ntlf9t/luci-app-easymesh/trunk package/lean/luci-app-easymesh
 
 # 动态DNS
 # gitClone https://github.com/small-5/ddns-scripts-dnspod package/lean/ddns-scripts_dnspod

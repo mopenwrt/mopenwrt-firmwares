@@ -11,18 +11,18 @@ cd $OPENWRTROOT
 [ -d "devices/common/diy" ] && cp -Rf devices/common/diy/* ./
 [ -d "devices/${MYTARGET}/diy" ] && cp -Rf devices/${MYTARGET}/diy/* ./
 
-./scripts/feeds clean
+[ $UPDATE_REPO == "true" ] && ./scripts/feeds clean
 ./scripts/feeds update -a
 
 # Use Lienol's https-dns-proxy package
 pushd feeds/packages/net
-rm -rf https-dns-proxy
+[ $UPDATE_REPO == "true" ] && rm -rf https-dns-proxy
 svnClone https://github.com/Lienol/openwrt-packages/trunk/net/https-dns-proxy
 popd
 
 # Use snapshots syncthing package
 pushd feeds/packages/utils
-rm -rf syncthing
+[ $UPDATE_REPO == "true" ] && rm -rf syncthing
 svnClone https://github.com/openwrt/packages/trunk/utils/syncthing
 popd
 

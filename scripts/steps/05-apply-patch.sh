@@ -3,8 +3,10 @@
 cd $OPENWRTROOT
 GITREV=`git -C $OPENWRTROOT rev-parse --short HEAD`
 
-rm -rf ./package/kernel/linux/modules/video.mk
-wget -P package/kernel/linux/modules/ https://github.com/immortalwrt/immortalwrt/raw/master/package/kernel/linux/modules/video.mk
+if [ $UPDATE_REPO == "true" ]; then
+  rm -rf ./package/kernel/linux/modules/video.mk
+  wget -P package/kernel/linux/modules/ https://github.com/immortalwrt/immortalwrt/raw/master/package/kernel/linux/modules/video.mk
+fi
 
 
 # Mod zzz-default-settings

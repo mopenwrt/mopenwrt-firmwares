@@ -9,7 +9,7 @@ NUMCORES=$(nproc)
 cp "${GITHUB_WORKSPACE}/devices/common/settings.ini" $GITHUB_ENV
 source "${GITHUB_WORKSPACE}/devices/common/settings.ini"
 if [ -f "${GITHUB_WORKSPACE}/devices/$MYTARGET/settings.ini" ]; then
-  echo Merge $MYTARGET/settings.ini
+  echo Merge $MYTARGET/settings.ini to $GITHUB_ENV
   source "${GITHUB_WORKSPACE}/devices/$MYTARGET/settings.ini"
   /usr/bin/crudini --merge $GITHUB_ENV < "${GITHUB_WORKSPACE}/devices/$MYTARGET/settings.ini"
 fi
