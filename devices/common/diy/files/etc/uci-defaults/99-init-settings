@@ -30,8 +30,18 @@ local wanZoneId = findId("firewall", "zone", "wan")
 if wanZoneId then
   cursor:set("firewall", wanZoneId, "output", "ACCEPT")
   cursor:set("firewall", wanZoneId, "input", "ACCEPT")
-  cursor:commit("firewall")
 end
+
+local allowMDNS = cursor:add("firewall", "rule")
+cursor:set("firewall", allowMDNS, "name", "Allow-mDNS")
+cursor:set("firewall", allowMDNS, "enabled", "1")
+cursor:set("firewall", allowMDNS, "target", "ACCEPT")
+cursor:set("firewall", allowMDNS, "proto", "udp")
+cursor:set("firewall", allowMDNS, "src", "*")
+cursor:set("firewall", allowMDNS, "src_port", "5353")
+cursor:set("firewall", allowMDNS, "dest_port", "5353")
+cursor:set("firewall", allowMDNS, "dest_ip", "224.0.0.251")
+cursor:commit("firewall")
 EOF
 
 # sshd listen on all interfaces
