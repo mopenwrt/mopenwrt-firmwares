@@ -8,10 +8,8 @@ if [ -f "devices/${MYTARGET}/$CONFIG_FILE" ]; then
   cat devices/${MYTARGET}/$CONFIG_FILE >> .config
 fi
 
-if [ "$KMODS_IN_FIRMWARE" = 'true' ]; then
-  echo "enable KMODS_IN_FIRMWARE"
-  echo "CONFIG_ALL_NONSHARED=y" >> .config
-fi
+[[ -f "devices/common/add_conf.sh" ]] && /bin/bash "devices/common/add_conf.sh"
+[[ -f "devices/${MYTARGET}/add_conf.sh" ]] && /bin/bash "devices/${MYTARGET}/add_conf.sh"
 
 make defconfig
 

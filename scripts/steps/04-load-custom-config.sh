@@ -14,12 +14,6 @@ cd $OPENWRTROOT
 ./scripts/feeds clean
 ./scripts/feeds update -a
 
-# Fix libssh
-pushd feeds/packages/libs
-rm -rf libssh
-svnClone https://github.com/openwrt/packages/trunk/libs/libssh
-popd
-
 # Use Lienol's https-dns-proxy package
 pushd feeds/packages/net
 rm -rf https-dns-proxy

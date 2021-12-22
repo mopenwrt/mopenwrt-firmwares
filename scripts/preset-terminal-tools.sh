@@ -3,8 +3,10 @@ source "$GITHUB_WORKSPACE/scripts/clone-repo.sh"
 
 SCRIPT_DIR="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
-mkdir -p files/root
-pushd files/root
+echo "CONFIG_PACKAGE_zsh=y" >> $OPENWRTROOT/.config
+
+mkdir -p $OPENWRTROOT/files/root
+pushd $OPENWRTROOT/files/root
 
 ## Install oh-my-zsh
 # Clone oh-my-zsh repository
@@ -19,3 +21,6 @@ gitClone https://github.com/zsh-users/zsh-completions ./.oh-my-zsh/custom/plugin
 cp $SCRIPT_DIR/.zshrc .
 
 popd
+
+# Change default shell to zsh
+sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' $OPENWRTROOT/package/base-files/files/etc/passwd

@@ -2,6 +2,8 @@
 
 SCRIPT_PATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
+MYTARGET=WNDR4300v1
+
 # GITHUB_WORKSPACE=$SCRIPT_PATH/..
 . $SCRIPT_PATH/clone-repo.sh
 . $SCRIPT_PATH/steps/00-local.sh

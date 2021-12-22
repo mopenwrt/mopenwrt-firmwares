@@ -8,4 +8,3 @@ SCRIPT_DIR="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
 /bin/bash "${SCRIPT_DIR}/add-packages.sh"
 
-/bin/bash $GITHUB_WORKSPACE/scripts/preset-terminal-tools.sh

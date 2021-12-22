@@ -13,8 +13,9 @@ gitClone https://github.com/Lienol/openwrt-package
 rm -rf openwrt-package/verysync
 rm -rf openwrt-package/luci-app-verysync
 
-# Add tmate
-gitClone https://github.com/immortalwrt/openwrt-tmate
+# Add tmate # Error on MIPS:  No rule to make target 'compat/forkpty-linux.c
+# gitClone https://github.com/immortalwrt/openwrt-tmate
+svnClone https://github.com/immortalwrt/openwrt-tmate/trunk/msgpack-c
 
 # Add naiveproxy
 gitClone https://github.com/immortalwrt-collections/openwrt-naiveproxy

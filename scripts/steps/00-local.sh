@@ -23,8 +23,8 @@ OPENWRTROOT=$GITHUB_WORKSPACE/openwrt
 
 echo GITHUB_WORKSPACE: $GITHUB_WORKSPACE
 export GITHUB_ENV=$OPENWRTROOT/.github-env
-#MYTARGET=${{matrix.target}}
-MYTARGET=rockchip
+[ -z $MYTARGET ] && MYTARGET=${{matrix.target}}
+# MYTARGET=WNDR4300v1
 
 echo > $GITHUB_ENV
 

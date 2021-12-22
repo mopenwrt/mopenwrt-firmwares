@@ -10,6 +10,8 @@ Build The OpenWrt firmwares [Lean's OpenWrt](https://github.com/coolsnowwolf/led
 
 ## Usage
 
+Install crudini first: `apt install crudini`
+
 1. Checkout the repo itself.
 2. Clone Openwrt Source: the default is https://github.com/coolsnowwolf/lede#master
 3. Load custom feeds(`diy-part1.sh`)

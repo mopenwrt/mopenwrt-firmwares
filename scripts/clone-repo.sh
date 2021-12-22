@@ -43,7 +43,8 @@ function gitClone() {
   dir=$(getFileNameNoExt $dir .git)
   if [ -f "$dir/.git/config" ]; then
     echo "git pull $url to $dir"
-    git -C "$dir" pull
+
+    [ $UPDATE_REPO == "true" ] && git -C "$dir" pull
   else
     # rm -fr $dir
     echo "git clone $DEPTH $BRANCH $url to $dir"
@@ -57,7 +58,7 @@ function svnClone() {
   # dir=${dir%.*}
   if [ -d "$dir/.svn" ]; then
     echo "svn update $url to $dir"
-    svn up "$dir"
+    [ $UPDATE_REPO == "true" ] && svn up "$dir"
   else
     # rm -fr $dir
     echo "svn clone $url to $dir"

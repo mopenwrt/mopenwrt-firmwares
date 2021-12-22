@@ -23,6 +23,9 @@ svnClone https://github.com/immortalwrt/luci/trunk/protocols/luci-proto-modemman
 svnClone https://github.com/immortalwrt/luci/trunk/applications/luci-app-gowebdav luci/applications/luci-app-gowebdav
 svnClone https://github.com/immortalwrt/packages/trunk/net/gowebdav packages/net/gowebdav
 
+# add libssh
+svnClone https://github.com/openwrt/packages/trunk/libs/libssh packages/libs/libssh
+
 # Add luci-app-netdata
 # rm -rf packages/admin/netdata
 # svnClone https://github.com/281677160/openwrt-package/trunk/feeds/packages/net/netdata packages/admin/netdata
