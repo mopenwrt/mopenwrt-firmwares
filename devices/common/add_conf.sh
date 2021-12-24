@@ -208,5 +208,6 @@ else
 # CONFIG_PACKAGE_wpad is not set
 # CONFIG_PACKAGE_wpad-mini is not set
 CONFIG_PACKAGE_wpad-openssl=y
+CONFIG_PACKAGE_luci-app-easymesh is not set
 " >> .config
 fi
