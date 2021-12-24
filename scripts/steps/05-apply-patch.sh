@@ -16,10 +16,10 @@ export date_version=$(date -d "$(rdate -n -4 -p ntp.aliyun.com)" +'%Y-%m-%d')
 sed -i "s/${orig_version}/${orig_version} $GITREV(${date_version})/g" zzz-default-settings
 popd
 
-
+ROUTER_HOSTNAME=${ROUTER_HOSTNAME:=$MYTARGET}
 # Modify default IP
 sed -i "s/192.168.1.1/$ROUTER_IP/g" package/base-files/files/bin/config_generate
-sed -i '/uci commit system/i\uci set system.@system[0].hostname='mOpenWrt'' package/lean/default-settings/files/zzz-default-settings
+sed -i '/uci commit system/i\uci set system.@system[0].hostname='$ROUTER_HOSTNAME'' package/lean/default-settings/files/zzz-default-settings
 sed -i "s/DISTRIB_DESCRIPTION='OpenWrt '/DISTRIB_DESCRIPTION='mOpenWrt '/g" package/lean/default-settings/files/zzz-default-settings
 # find package/*/ feeds/*/ -maxdepth 6 -path "*luci-app-smartdns/luasrc/controller/smartdns.lua" | xargs -i sed -i 's/\"SmartDNS\")\, 4/\"SmartDNS\")\, 3/g' {}
 # Test kernel 5.10
