@@ -3,6 +3,13 @@
 shopt -s globstar
 source "$GITHUB_WORKSPACE/scripts/clone-repo.sh"
 
+# cp -rf devices/common/. openwrt/
+# cp -rf devices/${MYTARGET}/. openwrt/
+cp -rf $GITHUB_WORKSPACE/devices $OPENWRTROOT/
+
+chmod +x $OPENWRTROOT/devices/${MYTARGET}/*.sh
+chmod +x $OPENWRTROOT/devices/common/*.sh
+
 cd $OPENWRTROOT
 
 [ -f "devices/common/before_defconf.sh" ] && /bin/bash devices/common/before_defconf.sh
@@ -12,7 +19,7 @@ cd $OPENWRTROOT
 [ -d "devices/${MYTARGET}/diy" ] && cp -Rf devices/${MYTARGET}/diy/* ./
 
 [ $UPDATE_REPO == "true" ] && ./scripts/feeds clean
-./scripts/feeds update -a
+[ $UPDATE_REPO == "true" ] && ./scripts/feeds update -a
 
 # Use Lienol's https-dns-proxy package
 pushd feeds/packages/net
@@ -27,4 +34,4 @@ svnClone https://github.com/openwrt/packages/trunk/utils/syncthing
 popd
 
 
-./scripts/feeds install -a
+[ $UPDATE_REPO == "true" ] && ./scripts/feeds install -a

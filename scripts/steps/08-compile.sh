@@ -1,13 +1,15 @@
 #!/bin/bash
 
-cd $OPENWRTROOT
-echo -e "$NUMCORES thread compile"
-make tools/compile -j$NUMCORES || make tools/compile -j1 V=s
-make toolchain/compile -j$NUMCORES || make toolchain/compile -j1 V=s
-make target/compile -j$NUMCORES || make target/compile -j1 V=s IGNORE_ERRORS=1
-make diffconfig
-make package/compile -j$NUMCORES IGNORE_ERRORS=1 || make package/compile -j1 V=s IGNORE_ERRORS=1
-make package/index
+if [ $SKIP_COMPILE != "true" ]; then
+  cd $OPENWRTROOT
+  echo -e "$NUMCORES thread compile"
+  make tools/compile -j$NUMCORES || make tools/compile -j1 V=s
+  make toolchain/compile -j$NUMCORES || make toolchain/compile -j1 V=s
+  make target/compile -j$NUMCORES || make target/compile -j1 V=s IGNORE_ERRORS=1
+  make diffconfig
+  make package/compile -j$NUMCORES IGNORE_ERRORS=1 || make package/compile -j1 V=s IGNORE_ERRORS=1
+  make package/index
+fi
 
 cd $OPENWRTROOT/bin/packages/*
 export PLATFORM=$(basename `pwd`)

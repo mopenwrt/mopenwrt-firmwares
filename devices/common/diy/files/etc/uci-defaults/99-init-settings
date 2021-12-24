@@ -56,8 +56,12 @@ uci commit dropbear
 
 # change the theme-argon use dark mode
 uci set argon-config.@global[0].mode='dark'
-uci set argon-config.@global[0].bing_background='1'
+uci set argon-config.@global[0].bing_background='0'
 uci commit argon-config
+
+sysctl -w net.ipv4.tcp_congestion_control="bbr"
+uci set turboacc.config.bbr_cca='1'
+uci commit turboacc
 
 # Try to execute init.sh (if exists)
 

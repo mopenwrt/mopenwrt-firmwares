@@ -13,7 +13,7 @@ fi
 
 if [[ "$MULTI_LANG" == "true" ]]; then
   # /usr/bin/crudini --merge .config < $SCRIPT_DIR/multi-lang.config
-  $SCRIPT_DIR/multi-lang.config >> .config
+  cat $SCRIPT_DIR/multi-lang.config >> .config
 else
   DEFAULT_LANG=${DEFAULT_LANG:="en"}
   # echo "CONFIG_LUCI_LANG_$DEFAULT_LANG=y" | /usr/bin/crudini --merge .config
@@ -94,6 +94,24 @@ if [[ "$DISABLE_SSR_PLUS" == "true" ]]; then
 # CONFIG_PACKAGE_luci-app-ssr-plus is not set
 # CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Libev_Client is not set
 " >> .config
+else
+  echo "
+CONFIG_PACKAGE_luci-app-ssr-plus=y
+CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Kcptun=y
+CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_NaiveProxy=y
+CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Redsocks2=y
+CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_Libev_Client=y
+CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_Libev_Server=y
+CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_Rust_Client=y
+CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_Rust_Server=y
+CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Libev_Client=y
+CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Libev_Server=y
+CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Simple_Obfs=y
+CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Trojan=y
+CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray_Plugin=y
+CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Xray=y
+CONFIG_PACKAGE_luci-app-ssr-mudb-server=y
+" >> .config
 fi
 
 if [[ "$DISABLE_FTP_SERVER" == "true" ]]; then
@@ -106,5 +124,89 @@ if [[ "$DISABLE_DDNS" == "true" ]]; then
 # CONFIG_PACKAGE_ddns-scripts is not set
 # CONFIG_PACKAGE_ddns-scripts_aliyun is not set
 # CONFIG_PACKAGE_ddns-scripts_dnspod is not set
+" >> .config
+else
+  echo "
+CONFIG_PACKAGE_ddns-scripts_cloudflare.com-v4=y
+CONFIG_PACKAGE_ddns-scripts_freedns_42_pl=y
+CONFIG_PACKAGE_ddns-scripts_godaddy.com-v1=y
+CONFIG_PACKAGE_ddns-scripts_no-ip_com=y
+CONFIG_PACKAGE_ddns-scripts_nsupdate=y
+CONFIG_PACKAGE_ddns-scripts_route53-v1=y
+CONFIG_PACKAGE_luci-app-tencentddns=y
+# NPS内网穿透
+CONFIG_PACKAGE_luci-app-nps=y
+" >> .config
+fi
+
+if [[ "$USE_PASSWALL" == "true" ]]; then
+  echo "
+CONFIG_PACKAGE_luci-app-passwall=y
+CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks=y
+CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks_Server=y
+CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ShadowsocksR=y
+CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ShadowsocksR_Server=y
+CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Xray=y
+CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Trojan_Plus=y
+CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Trojan_GO=y
+CONFIG_PACKAGE_luci-app-passwall_INCLUDE_NaiveProxy=n
+CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Brook=y
+CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Kcptun=y
+CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Haproxy=y
+CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ChinaDNS_NG=y
+CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Dns2socks=y
+CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Simple_Obfs=y
+CONFIG_PACKAGE_luci-app-passwall_INCLUDE_V2ray-plugin=y
+" >> .config
+fi
+
+if [[ "$USE_VSSR" == "true" ]]; then
+  echo "
+CONFIG_PACKAGE_luci-app-vssr=y
+CONFIG_PACKAGE_luci-app-vssr_INCLUDE_Xray=y
+CONFIG_PACKAGE_luci-app-vssr_INCLUDE_Trojan=y
+CONFIG_PACKAGE_luci-app-vssr_INCLUDE_Kcptun=y
+CONFIG_PACKAGE_luci-app-vssr_INCLUDE_Xray_plugin=y
+CONFIG_PACKAGE_luci-app-vssr_INCLUDE_ShadowsocksR_Server=y
+" >> .config
+fi
+
+if [[ "$USE_VPN" == "true" ]]; then
+  echo "
+CONFIG_PACKAGE_luci-app-n2n_v2=y
+CONFIG_PACKAGE_luci-app-zerotier=y
+CONFIG_PACKAGE_luci-app-wireguard=y
+CONFIG_PACKAGE_luci-app-pptp-server=y
+CONFIG_PACKAGE_luci-app-ipsec-server=y
+# CONFIG_PACKAGE_luci-app-ipsec-vpnd is not set
+CONFIG_PACKAGE_luci-app-softethervpn=y
+CONFIG_PACKAGE_luci-app-openvpn-server=y
+" >> .config
+else
+  echo "
+# CONFIG_PACKAGE_luci-app-ssr-mudb-server is not set
+" >> .config
+fi
+
+if [[ "$USE_MINIEAP" == "true" ]]; then
+  echo "
+CONFIG_PACKAGE_minieap=y
+# CONFIG_PACKAGE_mentohust=y
+CONFIG_PACKAGE_luci-proto-minieap=y
+" >> .config
+fi
+
+if [[ "$USE_MESH" == "true" ]]; then
+  echo "
+CONFIG_PACKAGE_kmod-batman-adv=y
+CONFIG_PACKAGE_luci-app-easymesh=y
+# CONFIG_PACKAGE_wpad-openssl is not set
+CONFIG_PACKAGE_wpad-mesh-openssl=y
+" >> .config
+else
+  echo "
+# CONFIG_PACKAGE_wpad is not set
+# CONFIG_PACKAGE_wpad-mini is not set
+CONFIG_PACKAGE_wpad-openssl=y
 " >> .config
 fi
