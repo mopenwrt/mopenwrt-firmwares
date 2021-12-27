@@ -1,2 +1,4 @@
 .env
 openwrt
+v2ray-rules-dat.tgz
+.github-env

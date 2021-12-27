@@ -15,3 +15,4 @@ make defconfig
 
 [[ -f "devices/common/after_defconf.sh" ]] && /bin/bash "devices/common/after_defconf.sh"
 [[ -f "devices/${MYTARGET}/after_defconf.sh" ]] && /bin/bash "devices/${MYTARGET}/after_defconf.sh"
+[[ -f "$GITHUB_WORKSPACE/.env/${MYTARGET}/after_defconf.sh" ]] && /bin/bash "$GITHUB_WORKSPACE/.env/${MYTARGET}/after_defconf.sh"

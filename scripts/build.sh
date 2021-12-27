@@ -1,9 +1,11 @@
 #!/bin/bash
 
+# set -e
+
 SCRIPT_PATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
-MYTARGET=WNDR4300v1
-# MYTARGET=rockchip
+# MYTARGET=WNDR4300v1
+MYTARGET=rockchip
 
 # GITHUB_WORKSPACE=$SCRIPT_PATH/..
 . $SCRIPT_PATH/clone-repo.sh
@@ -16,7 +18,10 @@ set +o allexport
 
 # clean
 pushd $OPENWRTROOT
-rm -fr bin files
+# Delete contents of the directories /bin and /build_dir
+# make clean
+rm -fr bin
+rm -fr files
 # rm -fr feeds customfeeds package/community
 popd
 
@@ -27,9 +32,9 @@ fi
 
 gitClone -b $REPO_BRANCH $REPO_URL $OPENWRTROOT
 
-$SCRIPT_PATH/steps/04-load-custom-config.sh
-$SCRIPT_PATH/steps/05-apply-patch.sh
-$SCRIPT_PATH/steps/06-make-config.sh
-[ SKIP_DOWNLOAD_PACKAGES != "true" ] && $SCRIPT_PATH/steps/07-download-packages.sh
-. $SCRIPT_PATH/steps/08-compile.sh
-$SCRIPT_PATH/steps/09-generate-firmware.sh
+"$SCRIPT_PATH/steps/04-load-custom-config.sh"
+"$SCRIPT_PATH/steps/05-apply-patch.sh"
+"$SCRIPT_PATH/steps/06-make-config.sh"
+[ SKIP_DOWNLOAD_PACKAGES != "true" ] && "$SCRIPT_PATH/steps/07-download-packages.sh"
+. "$SCRIPT_PATH/steps/08-compile.sh"
+"$SCRIPT_PATH/steps/09-generate-firmware.sh"

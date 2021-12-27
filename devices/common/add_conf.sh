@@ -40,6 +40,10 @@ CONFIG_PACKAGE_luci-app-nft-qos=y
 CONFIG_PACKAGE_luci-app-cifs-mount=y
 CONFIG_PACKAGE_luci-app-filetransfer=y
 CONFIG_PACKAGE_luci-app-aria2=y
+CONFIG_PACKAGE_luci-app-diskman=y
+CONFIG_PACKAGE_luci-app-rclone=y
+CONFIG_PACKAGE_luci-app-rclone_INCLUDE_rclone-webui=y
+CONFIG_PACKAGE_luci-app-rclone_INCLUDE_rclone-ng=y
 CONFIG_PACKAGE_automount=y
 CONFIG_PACKAGE_resize2fs=y
 CONFIG_PACKAGE_ariang=y
@@ -58,6 +62,15 @@ CONFIG_PACKAGE_libplist-utils=y
 CONFIG_PACKAGE_libusbmuxd-utils=y
 CONFIG_PACKAGE_usbmuxd=y
 CONFIG_PACKAGE_libudev-fbsd=y
+" >> .config
+else
+  echo "
+# CONFIG_PACKAGE_luci-app-qbittorrent_dynamic is not set
+# CONFIG_PACKAGE_luci-app-rclone is not set
+# CONFIG_PACKAGE_luci-app-rclone_INCLUDE_rclone-webui is not set
+# CONFIG_PACKAGE_luci-app-rclone_INCLUDE_rclone-ng is not set
+# CONFIG_PACKAGE_luci-app-diskman_INCLUDE_btrfs_progs is not set
+# CONFIG_PACKAGE_luci-app-diskman_INCLUDE_lsblk is not set
 " >> .config
 fi
 
@@ -120,7 +133,7 @@ fi
 
 if [[ "$DISABLE_DDNS" == "true" ]]; then
   echo "
-# CONFIG_DEFAULT_luci-app-ddns is not set
+# CONFIG_PACKAGE_luci-app-ddns is not set
 # CONFIG_PACKAGE_ddns-scripts is not set
 # CONFIG_PACKAGE_ddns-scripts_aliyun is not set
 # CONFIG_PACKAGE_ddns-scripts_dnspod is not set
@@ -157,6 +170,17 @@ CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ChinaDNS_NG=y
 CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Dns2socks=y
 CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Simple_Obfs=y
 CONFIG_PACKAGE_luci-app-passwall_INCLUDE_V2ray-plugin=y
+" >> .config
+  tar xzvf "$GITHUB_WORKSPACE/devices/common/diy/v2ray-rules-dat.tgz" -C "$OPENWRTROOT/files/"
+else
+  echo "
+# CONFIG_PACKAGE_luci-app-passwall is not set
+# CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ChinaDNS_NG is not set
+# CONFIG_PACKAGE_luci-app-passwall_INCLUDE_PDNSD is not set
+# CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks_Libev_Client is not set
+# CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ShadowsocksR_Libev_Client is not set
+# CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Simple_Obfs is not set
+# CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Trojan_Plus is not set
 " >> .config
 fi
 
@@ -208,6 +232,44 @@ else
 # CONFIG_PACKAGE_wpad is not set
 # CONFIG_PACKAGE_wpad-mini is not set
 CONFIG_PACKAGE_wpad-openssl=y
-CONFIG_PACKAGE_luci-app-easymesh is not set
+# CONFIG_PACKAGE_luci-app-easymesh is not set
 " >> .config
+fi
+
+if [[ "$USE_DNSMASQ_FULL" == "true" ]]; then
+  echo "
+# CONFIG_PACKAGE_dnsmasq is not set
+CONFIG_PACKAGE_dnsmasq-full=y
+CONFIG_PACKAGE_dnsmasq_full_auth=y
+CONFIG_PACKAGE_dnsmasq_full_conntrack=y
+CONFIG_PACKAGE_dnsmasq_full_dhcp=y
+CONFIG_PACKAGE_dnsmasq_full_dhcpv6=y
+CONFIG_PACKAGE_dnsmasq_full_dnssec=y
+CONFIG_PACKAGE_dnsmasq_full_ipset=y
+CONFIG_PACKAGE_dnsmasq_full_noid=y
+CONFIG_PACKAGE_dnsmasq_full_tftp=y
+" >> .config
+else
+  echo "
+# CONFIG_PACKAGE_dnsmasq-full is not set
+CONFIG_PACKAGE_dnsmasq=y
+" >> .config
+fi
+
+if [[ "$USE_COREMARK" == "true" ]]; then
+  echo "
+CONFIG_PACKAGE_coremark=y
+" >> .config
+else
+  echo "
+# CONFIG_PACKAGE_coremark is not set
+" >> .config
+fi
+
+if [[ "$ALLOW_WAN_FORWARD" == "true" ]]; then
+  sed -i "s/local allowWanInput=\"REJECT\"/local allowWanInput=\"ACCEPT\"/" $OPENWRTROOT/files/etc/uci-defaults/99-init-settings
+fi
+
+if [[ "$ALLOW_WAN_INPUT" == "true" ]]; then
+  sed -i "s/local allowWanForward=\"REJECT\"/local allowWanForward=\"ACCEPT\"/" $OPENWRTROOT/files/etc/uci-defaults/99-init-settings
 fi

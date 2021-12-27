@@ -27,23 +27,30 @@ function findId(config, section, name)
   return result
 end
 local wanZoneId = findId("firewall", "zone", "wan")
+local allowWanInput="REJECT"
+local allowWanForward="REJECT"
 if wanZoneId then
   cursor:set("firewall", wanZoneId, "output", "ACCEPT")
-  cursor:set("firewall", wanZoneId, "input", "ACCEPT")
+  cursor:set("firewall", wanZoneId, "input", allowWanInput)
+  cursor:set("firewall", wanZoneId, "forward", allowWanForward)
 end
 
-local allowMDNS = cursor:add("firewall", "rule")
-cursor:set("firewall", allowMDNS, "name", "Allow-mDNS")
-cursor:set("firewall", allowMDNS, "enabled", "1")
-cursor:set("firewall", allowMDNS, "target", "ACCEPT")
-cursor:set("firewall", allowMDNS, "proto", "udp")
-cursor:set("firewall", allowMDNS, "src", "*")
-cursor:set("firewall", allowMDNS, "src_port", "5353")
-cursor:set("firewall", allowMDNS, "dest_port", "5353")
-cursor:set("firewall", allowMDNS, "dest_ip", "224.0.0.251")
-cursor:commit("firewall")
+if not findId("firewall", "rule", "Allow-mDNS") then
+  local allowMDNS = cursor:add("firewall", "rule")
+  cursor:set("firewall", allowMDNS, "name", "Allow-mDNS")
+  cursor:set("firewall", allowMDNS, "enabled", "1")
+  cursor:set("firewall", allowMDNS, "target", "ACCEPT")
+  cursor:set("firewall", allowMDNS, "proto", "udp")
+  cursor:set("firewall", allowMDNS, "src", "*")
+  cursor:set("firewall", allowMDNS, "src_port", "5353")
+  cursor:set("firewall", allowMDNS, "dest_port", "5353")
+  cursor:set("firewall", allowMDNS, "dest_ip", "224.0.0.251")
+  cursor:commit("firewall")
+end
 EOF
 
+# Fixing permissions
+chmod -R u=rwX,go= /etc/dropbear
 # sshd listen on all interfaces
 uci delete dropbear.@dropbear[0].Interface
 
@@ -55,9 +62,9 @@ fi
 uci commit dropbear
 
 # change the theme-argon use dark mode
-uci set argon-config.@global[0].mode='dark'
-uci set argon-config.@global[0].bing_background='0'
-uci commit argon-config
+uci set argon.@global[0].mode='dark'
+uci set argon.@global[0].bing_background='0'
+uci commit argon
 
 sysctl -w net.ipv4.tcp_congestion_control="bbr"
 uci set turboacc.config.bbr_cca='1'
